@@ -12,7 +12,7 @@ def input_error(func):
         try:
             func(*args, **kwargs)
         except KeyError as inst:
-            if func.__name__ == 'phone':
+            if func.__name__ in ['add', 'change']:
                 show_bot_answer('Enter user name')
             else:
                 show_bot_answer(str(inst))
@@ -26,6 +26,11 @@ def input_error(func):
                 show_bot_answer('Enter user name')
             else:
                 show_bot_answer(str(inst))
+        except TypeError as inst:
+            if func.__name__ in ['add', 'change']:
+                show_bot_answer('Give me name and phone please')
+            else:
+                show_bot_answer(f'{type(inst)}: {str(inst.args)}')
 
     return inner
 
@@ -44,14 +49,12 @@ def show_bot_answer(string):
 
 
 @input_error
-def add(*params):
-    name, phone = params
+def add(name, phone):
     phonebook[name] = [phone]
 
 
 @input_error
-def change(*params):
-    name, phone = params
+def change(name, phone):
     phonebook[name].append(phone)
 
 
