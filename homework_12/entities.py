@@ -153,31 +153,34 @@ class AddressBook(UserDict):
         except FileNotFoundError:
             return AddressBook()
 
+    def add(self, name, phone, birthday: str = None):
+        self.add_record(Record(name=name, birthday=birthday).add_phone(phone))
+
     def add_record(self, record):
         self.data[record.name.value] = record
 
-    def find(self, name) -> Record:
+    def find_record(self, name) -> Record:
         return self.data.get(name, None)
 
     def delete(self, name):
         self.data.pop(name, None)
 
     def add_phone(self, name, phone):
-        record = self.find(name)
+        record = self.find_record(name)
         if record is not None:
             record.add_phone(str(phone))
         else:
             raise NameNotFoundException
 
     def add_birthday(self, name: str, birthday: str):
-        record = self.find(name)
+        record = self.find_record(name)
         if record is not None:
             record.add_birthday(str(birthday))
         else:
             raise NameNotFoundException
 
     def get_phones(self, name) -> list[Phone]:
-        record = self.find(name)
+        record = self.find_record(name)
         if record is not None:
             return record.phones
         else:

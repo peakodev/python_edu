@@ -22,11 +22,13 @@ def input_error(callback_after=None):
     def decorator(func):
         def inner(*args, **kwargs):
             try:
-                func(*args, **kwargs)
+                return func(*args, **kwargs)
             except CustomExceptions as inst:
                 show_bot_answer(str(inst))
                 if callback_after is not None:
                     callback_after()
+            except TypeError as te:
+                show_bot_answer(str(te))
 
         return inner
     return decorator
