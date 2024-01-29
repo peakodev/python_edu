@@ -1,14 +1,15 @@
-from exceptions import CustomFieldExceptions, WrongNameException, WrongPhoneException, WrongBirthdayException
+from exceptions import CustomExceptions, WrongNameException, WrongPhoneException, WrongBirthdayException, NameNotFoundException
 from collections import UserDict
 from datetime import date, datetime
 import re
+import pickle
 
 
 def validator(setter_func):
     def wrapper(self, value):
         try:
             is_valid = self._validate(value)
-        except CustomFieldExceptions as e:
+        except CustomExceptions as e:
             raise e
         # if raise exception is not realized in validate function lets raise it
         if isinstance(is_valid, bool) and not is_valid:
@@ -45,7 +46,7 @@ class Field:
 
 class Name(Field):
     def _validate(self, value):
-        if not (isinstance(value, str) and len(value) > 3):
+        if not (isinstance(value, str) and len(value) >= 3):
             raise WrongNameException
 
 
@@ -105,6 +106,10 @@ class Record:
         self.phones.append(phone_obj)
         return self
 
+    def add_birthday(self, birthday: str):
+        self.birthday = Birthday(birthday)
+        return self
+
     def remove_phone(self, phone):
         phone_obj = self.find_phone(phone)
         if phone_obj:
@@ -132,9 +137,57 @@ class Record:
 
 
 class AddressBook(UserDict):
-    def __init__(self):
-        self.__page_count = 0
-        super().__init__()
+    dump_file_name = 'dumps/address_book.bin'
+
+    @staticmethod
+    def serialize(obj):
+        with open(AddressBook.dump_file_name, "wb") as file:
+            pickle.dump(obj, file)
+
+    @staticmethod
+    def deserialize():
+        try:
+            with open(AddressBook.dump_file_name, "rb") as file:
+                obj = pickle.load(file)
+            return obj
+        except FileNotFoundError:
+            return AddressBook()
+
+    def add_record(self, record):
+        self.data[record.name.value] = record
+
+    def find(self, name) -> Record:
+        return self.data.get(name, None)
+
+    def delete(self, name):
+        self.data.pop(name, None)
+
+    def add_phone(self, name, phone):
+        record = self.find(name)
+        if record is not None:
+            record.add_phone(str(phone))
+        else:
+            raise NameNotFoundException
+
+    def add_birthday(self, name: str, birthday: str):
+        record = self.find(name)
+        if record is not None:
+            record.add_birthday(str(birthday))
+        else:
+            raise NameNotFoundException
+
+    def get_phones(self, name) -> list[Phone]:
+        record = self.find(name)
+        if record is not None:
+            return record.phones
+        else:
+            raise NameNotFoundException
+
+
+class AddressBookIterator:
+    def __init__(self, book: AddressBook, page_count: int = 1):
+        self.__page_count = page_count
+        self.__book = book
 
     @property
     def page_count(self):
@@ -146,29 +199,7 @@ class AddressBook(UserDict):
             raise ValueError("Page count have to be greater than 0")
         self.__page_count = page_count
 
-    def add_record(self, record):
-        self.data[record.name.value] = record
-
-    def find(self, name):
-        return self.data.get(name, None)
-
-    def delete(self, name):
-        self.data.pop(name, None)
-
-    # This will return iterator
-    # def __iter__(self):
-    #     self.__counter = 0
-    #     self.__countable_data = list(self.data.values())
-    #     return self
-    #
-    # def __next__(self):
-    #     if self.__counter >= len(self.__countable_data):
-    #         raise StopIteration
-    #     self.__counter += self.__page_count
-    #     return self.__countable_data[self.__counter - self.__page_count:self.__counter]
-
     def __iter__(self):
-        records = list(self.data.values())
+        records = list(self.__book.data.values())
         for i in range(0, len(records), self.__page_count):
-            yield records[i:i + self.__page_count]
-
+            yield records[i] if self.__page_count == 1 else records[i:i + self.__page_count]
