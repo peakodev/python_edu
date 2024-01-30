@@ -198,24 +198,3 @@ class AddressBook(UserDict):
             return record.phones
         else:
             raise NameNotFoundException
-
-
-class AddressBookIterator:
-    def __init__(self, book: AddressBook, page_count: int = 1):
-        self.__page_count = page_count
-        self.__book = book
-
-    @property
-    def page_count(self):
-        return self.__page_count
-
-    @page_count.setter
-    def page_count(self, page_count):
-        if page_count <= 0:
-            raise ValueError("Page count have to be greater than 0")
-        self.__page_count = page_count
-
-    def __iter__(self):
-        records = list(self.__book.data.values())
-        for i in range(0, len(records), self.__page_count):
-            yield records[i] if self.__page_count == 1 else records[i:i + self.__page_count]

@@ -1,6 +1,7 @@
-from entities import AddressBook, Record, AddressBookIterator, DATE_FORMAT
+from entities import AddressBook, Record, DATE_FORMAT
+from generators import AddressBookIterator
 from utils import singleton, show_bot_answer, input_error
-from exceptions import CommandNotFound, CustomExceptions
+from exceptions import CommandNotFound
 from faker import Faker
 from random import randint
 from datetime import date, timedelta
@@ -87,7 +88,7 @@ def exit_bot(_):
     Bot().turn_off()
 
 
-def command_list():
+def command_list(_):
     show_bot_answer(f"Available commands: {', '.join(Bot().commands.keys())}")
 
 
@@ -128,7 +129,7 @@ def bot_start():
         'close': exit_bot,
         'exit': exit_bot
     }
-    command_list()
+    command_list(None)
     while bot.mode:
         try:
             command_result = get_command_from_input(input("\nCommand: "))
