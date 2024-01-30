@@ -1,5 +1,5 @@
-from entities import AddressBook, Record, DATE_FORMAT
-from generators import AddressBookIterator
+from entities import PhoneBook, Record, DATE_FORMAT
+from generators import PhoneBookIterator
 from utils import singleton, show_bot_answer, input_error
 from exceptions import CommandNotFound
 from faker import Faker
@@ -15,9 +15,9 @@ class Bot:
         self.__commands = {}
 
     @property
-    def book(self) -> AddressBook:
+    def book(self) -> PhoneBook:
         if self.__book is None:
-            self.__book = AddressBook.deserialize()
+            self.__book = PhoneBook.deserialize()
         return self.__book
 
     @property
@@ -33,8 +33,8 @@ class Bot:
         self.__commands = commands
 
     def turn_off(self):
-        show_bot_answer("Saving address book into file ... ")
-        AddressBook.serialize(self.book)
+        show_bot_answer("Saving Phone book into file ... ")
+        PhoneBook.serialize(self.book)
         self.__mode = False
 
 
@@ -64,16 +64,16 @@ def generate(count_of_elements):
 
     # Iterate by 3 items per page
     print('\nIterate by 3 items per page:')
-    for i, records in enumerate(AddressBookIterator(Bot().book, 3)):
+    for i, records in enumerate(PhoneBookIterator(Bot().book, 3)):
         print(f"Portion {i + 1}: ")
         for pi in range(len(records)):
             print(f"{records[pi]}")
 
-    AddressBook.serialize(Bot().book)
+    PhoneBook.serialize(Bot().book)
 
 
 def show_all(_):
-    for record in AddressBookIterator(Bot().book):
+    for record in PhoneBookIterator(Bot().book):
         show_bot_answer(str(record))
 
 

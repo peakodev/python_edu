@@ -1,8 +1,8 @@
-from entities import AddressBook
+from entities import PhoneBook
 
 
-class AddressBookIterator:
-    def __init__(self, book: AddressBook):
+class PhoneBookIterator:
+    def __init__(self, book: PhoneBook):
         self.__book = book
 
     def __iter__(self):
@@ -11,8 +11,8 @@ class AddressBookIterator:
             yield records[i]
 
 
-class PaginatedAddressBookIterator:
-    def __init__(self, book: AddressBook, page_count: int = 2):
+class PaginatedPhoneBookIterator:
+    def __init__(self, book: PhoneBook, page_count: int = 2):
         self.__page_count = page_count
         self.__book = book
 

@@ -141,22 +141,22 @@ class Record:
         return f"{ret} phones: {'; '.join(p.value for p in self.phones)}"
 
 
-class AddressBook(UserDict):
-    dump_file_name = 'dumps/address_book.bin'
+class PhoneBook(UserDict):
+    dump_file_name = 'dumps/phone_book.bin'
 
     @staticmethod
     def serialize(obj):
-        with open(AddressBook.dump_file_name, "wb") as file:
+        with open(PhoneBook.dump_file_name, "wb") as file:
             pickle.dump(obj, file)
 
     @staticmethod
     def deserialize():
         try:
-            with open(AddressBook.dump_file_name, "rb") as file:
+            with open(PhoneBook.dump_file_name, "rb") as file:
                 obj = pickle.load(file)
             return obj
         except FileNotFoundError:
-            return AddressBook()
+            return PhoneBook()
 
     def add(self, name, phone, birthday: str = None):
         self.add_record(Record(name=name, birthday=birthday).add_phone(phone))

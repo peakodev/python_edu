@@ -18,7 +18,7 @@ class WrongBirthdayException(CustomExceptions):
 
 
 class NameNotFoundException(CustomExceptions):
-    def __init__(self, msg="Can't find name in address book"):
+    def __init__(self, msg="Can't find name in phone book"):
         super().__init__(msg)
 
 
