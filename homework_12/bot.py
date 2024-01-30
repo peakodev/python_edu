@@ -49,31 +49,36 @@ def generate(count_of_elements):
     print(f'\nGenerate random phone book with {count_of_elements} elements ...')
     fake = Faker()
     # Prepare book
-    book = AddressBook()
     def_date = date(year=1990, month=1, day=1)
     for i in range(int(count_of_elements)):
         birth = def_date + timedelta(days=i)
         name = fake.first_name_female() if i % 2 else fake.first_name_male()
-        if book.find_record(name) is not None:
+        if Bot().book.find_record(name) is not None:
             name = f'{name} {i}'
         rec = Record(f"{name}", birth.strftime(DATE_FORMAT))
         rec.add_phone(str(randint(1000000000, 9999999999)))
         rec.add_phone(str(randint(1000000000, 9999999999)))
-        book.add_record(rec)
+        Bot().book.add_record(rec)
         print(rec)
 
     # Iterate by 3 items per page
     print('\nIterate by 3 items per page:')
-    for i, records in enumerate(AddressBookIterator(book, 3)):
+    for i, records in enumerate(AddressBookIterator(Bot().book, 3)):
         print(f"Portion {i + 1}: ")
         for pi in range(len(records)):
             print(f"{records[pi]}")
 
-    AddressBook.serialize(book)
+    AddressBook.serialize(Bot().book)
 
 
 def show_all(_):
     for record in AddressBookIterator(Bot().book):
+        show_bot_answer(str(record))
+
+
+@input_error(callback_after=None)
+def find(query):
+    for record in Bot().book.find(query):
         show_bot_answer(str(record))
 
 
@@ -114,7 +119,7 @@ def bot_start():
         'add phone': bot.book.add_phone,
         'add birthday': bot.book.add_birthday,
         'get phone': phone,
-        'find': bot.book.find,
+        'find': find,
         'hello': lambda _: show_bot_answer('How can I help you?'),
         'show all': show_all,
         'help': command_list,
@@ -123,6 +128,7 @@ def bot_start():
         'close': exit_bot,
         'exit': exit_bot
     }
+    command_list()
     while bot.mode:
         try:
             command_result = get_command_from_input(input("\nCommand: "))

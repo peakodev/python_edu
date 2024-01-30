@@ -1,4 +1,5 @@
-from exceptions import CustomExceptions, WrongNameException, WrongPhoneException, WrongBirthdayException, NameNotFoundException
+from exceptions import CustomExceptions, WrongNameException, WrongPhoneException, WrongBirthdayException, \
+    NameNotFoundException, TooSmallQueryException
 from collections import UserDict
 from datetime import date, datetime
 import re
@@ -125,6 +126,10 @@ class Record:
         found_phone = list(filter(lambda ph: ph.value == phone, self.phones))
         return found_phone[0] if len(found_phone) else None
 
+    def is_query_in_phones(self, query) -> bool:
+        found_phone = list(filter(lambda ph: query in ph.value, self.phones))
+        return bool(len(found_phone))
+
     def days_to_birthday(self):
         if self.birthday is not None:
             return self.birthday.days_to_birthday()
@@ -161,6 +166,14 @@ class AddressBook(UserDict):
 
     def find_record(self, name) -> Record:
         return self.data.get(name, None)
+
+    def find(self, query):
+        if len(query) < 3:
+            raise TooSmallQueryException
+        in_names = [name for name in self.data.keys() if query.lower() in name.lower()]
+        in_phones = [record.name.value for record in self.data.values() if record.is_query_in_phones(query)]
+        all_names = list(set(in_names + in_phones))
+        return [self.data.get(key) for key in all_names] if len(all_names) > 0 else []
 
     def delete(self, name):
         self.data.pop(name, None)
