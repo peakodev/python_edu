@@ -22,11 +22,6 @@ class NameNotFoundException(CustomExceptions):
         super().__init__(msg)
 
 
-class CommandNotFound(CustomExceptions):
-    def __init__(self, msg="Command not found. Please provide a valid command."):
-        super().__init__(msg)
-
-
 class TooSmallQueryException(CustomExceptions):
     def __init__(self, msg="Please provide query with at least 3 characters"):
         super().__init__(msg)

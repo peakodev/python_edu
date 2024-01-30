@@ -1,5 +1,6 @@
-from exceptions import CustomExceptions, WrongNameException, WrongPhoneException, WrongBirthdayException, \
+from phone_book.exceptions import CustomExceptions, WrongNameException, WrongPhoneException, WrongBirthdayException, \
     NameNotFoundException, TooSmallQueryException
+from phone_book.fs import datadir
 from collections import UserDict
 from datetime import date, datetime
 import re
@@ -142,7 +143,7 @@ class Record:
 
 
 class PhoneBook(UserDict):
-    dump_file_name = 'dumps/phone_book.bin'
+    dump_file_name = datadir() / 'phone_book.bin'
 
     @staticmethod
     def serialize(obj):

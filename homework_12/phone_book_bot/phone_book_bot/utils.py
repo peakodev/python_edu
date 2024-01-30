@@ -1,5 +1,5 @@
 import sys
-from entities import CustomExceptions
+from phone_book import CustomExceptions
 
 
 def singleton(class_):

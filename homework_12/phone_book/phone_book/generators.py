@@ -1,4 +1,4 @@
-from entities import PhoneBook
+from phone_book.entities import PhoneBook
 
 
 class PhoneBookIterator:

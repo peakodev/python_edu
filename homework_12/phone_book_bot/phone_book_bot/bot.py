@@ -1,7 +1,6 @@
-from entities import PhoneBook, Record, DATE_FORMAT
-from generators import PhoneBookIterator
-from utils import singleton, show_bot_answer, input_error
-from exceptions import CommandNotFound
+from phone_book import PhoneBook, Record, DATE_FORMAT, PhoneBookIterator, PaginatedPhoneBookIterator
+from phone_book_bot.utils import singleton, show_bot_answer, input_error
+from phone_book_bot.exceptions import CommandNotFound
 from faker import Faker
 from random import randint
 from datetime import date, timedelta
@@ -64,7 +63,7 @@ def generate(count_of_elements):
 
     # Iterate by 3 items per page
     print('\nIterate by 3 items per page:')
-    for i, records in enumerate(PhoneBookIterator(Bot().book, 3)):
+    for i, records in enumerate(PaginatedPhoneBookIterator(Bot().book, 3)):
         print(f"Portion {i + 1}: ")
         for pi in range(len(records)):
             print(f"{records[pi]}")
