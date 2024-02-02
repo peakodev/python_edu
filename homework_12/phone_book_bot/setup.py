@@ -11,4 +11,5 @@ setup(
     author_email='peakodev@gmail.com',
     packages=find_namespace_packages(),
     install_requires=['phone_book>=0.0.1', 'faker'],
+    url='https://github.com/peakodev/python_edu/tree/main/homework_12/phone_book_bot'
 )
