@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "code-black-poetry"
+version = "0.1.0"
+description = ""
+authors = ["Nazar Salo <peakodev@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.1.1"
+pytest = "^8.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
