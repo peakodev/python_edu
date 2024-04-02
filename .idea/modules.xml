@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../GoIT_FinalProject/.idea/GoIT_FinalProject.iml" filepath="$PROJECT_DIR$/../GoIT_FinalProject/.idea/GoIT_FinalProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../dunkin/.idea/dunkin.iml" filepath="$PROJECT_DIR$/../dunkin/.idea/dunkin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../my007/.idea/my007.iml" filepath="$PROJECT_DIR$/../my007/.idea/my007.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/python_edu.iml" filepath="$PROJECT_DIR$/.idea/python_edu.iml" />
     </modules>
   </component>
