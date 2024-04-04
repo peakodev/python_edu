@@ -65,7 +65,7 @@ class ArgumentParser:
     def parse_args():
         parser = argparse.ArgumentParser(
             description='Fetch exchange rates (USD and EUR) for the past n days.')
-        parser.add_argument('num_days', type=int, nargs='?', default=2, 
+        parser.add_argument('num_days', type=int, nargs='?', default=2,
                             help='Number of past days to fetch exchange rates for')
         parser.add_argument('--currencies', nargs='+', default=[],
                             help='Additional currencies to include in response')

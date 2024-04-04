@@ -1,6 +1,4 @@
-console.log('Hello world!')
-
-const ws = new WebSocket('ws://localhost:8080')
+const ws = new WebSocket('ws://localhost:7070')
 
 let formChat = document.getElementById('formChat')
 let textField = document.getElementById('textField')
@@ -21,7 +19,7 @@ ws.addEventListener('message', function (e) {
         console.log(e.data)
         const elMsg = document.createElement('div')
         elMsg.textContent = e.data
-        subscribe.appendChild(elMsg)
+        subscribe.prepend(elMsg)
     } catch (e) {
         console.log('Error:', e)
     }
