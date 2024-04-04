@@ -23,7 +23,7 @@ docker build -t homework_05 .
 This command builds a Docker image from the Dockerfile and tags it with the name homework_05.
 
 ```bash
-docker run -d -p 8080:8080 -p 7070:7070 homework_05
+docker run --name homework_05_container -d -p 8080:8080 -p 7070:7070 homework_05
 ```
 
 This command starts a container from the myproject image and maps ports 8080 and 7070 in the container to ports 8080 and 7070 on the host machine.

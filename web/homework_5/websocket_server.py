@@ -13,7 +13,7 @@ from aiofile import async_open
 from logger import logger
 from exchanger import ExchangeRateFetcher
 
-URL = 'localhost'
+URL = '0.0.0.0'
 PORT = 7070
 
 
