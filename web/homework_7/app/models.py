@@ -6,48 +6,48 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db import Base
 
 
-class Groups(Base):
+class Group(Base):
     __tablename__ = "groups"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
-    students: Mapped[list["Students"]] = relationship(
-        "Students", back_populates="group", cascade="all, delete-orphan")
+    students: Mapped[list["Student"]] = relationship(
+        "Student", back_populates="group", cascade="all, delete-orphan")
 
 
-class Students(Base):
+class Student(Base):
     __tablename__ = "students"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     group_id: Mapped[int] = mapped_column(Integer, ForeignKey("groups.id", ondelete="CASCADE"))
 
-    group: Mapped[Groups] = relationship("Groups", back_populates="students")
-    grades: Mapped[list["Grades"]] = relationship("Grades", back_populates="student")
+    group: Mapped[Group] = relationship("Group", back_populates="students")
+    grades: Mapped[list["Grade"]] = relationship("Grade", back_populates="student")
 
 
-class Teachers(Base):
+class Teacher(Base):
     __tablename__ = "teachers"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
 
-    subject: Mapped[list["Subjects"]] = relationship("Subjects", back_populates="teacher")
-    grades: Mapped[list["Grades"]] = relationship("Grades", back_populates="teacher")
+    subjects: Mapped[list["Subject"]] = relationship("Subject", back_populates="teacher")
 
 
-class Subjects(Base):
+class Subject(Base):
     __tablename__ = "subjects"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     teacher_id: Mapped[int] = mapped_column(Integer, ForeignKey("teachers.id"), nullable=True)
 
-    teacher: Mapped[Teachers] = relationship("Teachers", back_populates="subjects")
+    teacher: Mapped[Teacher] = relationship("Teacher", back_populates="subjects")
+    grades: Mapped[list["Grade"]] = relationship("Grade", back_populates="subject")
 
 
-class Grades(Base):
+class Grade(Base):
     __tablename__ = "grades"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -56,5 +56,5 @@ class Grades(Base):
     grade: Mapped[int] = mapped_column(Integer, nullable=False)
     received_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
-    student: Mapped[Students] = relationship("Students", back_populates="grades")
-    teacher: Mapped[Teachers] = relationship("Teachers", back_populates="grades")
+    student: Mapped[Student] = relationship("Student", back_populates="grades")
+    subject: Mapped[Subject] = relationship("Subject", back_populates="grades")
