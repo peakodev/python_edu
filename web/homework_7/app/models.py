@@ -15,6 +15,9 @@ class Group(Base):
     students: Mapped[list["Student"]] = relationship(
         "Student", back_populates="group", cascade="all, delete-orphan")
 
+    def __repr__(self):
+        return f"<Group {self.id=} {self.name=}>"
+
 
 class Student(Base):
     __tablename__ = "students"
@@ -26,6 +29,9 @@ class Student(Base):
     group: Mapped[Group] = relationship("Group", back_populates="students")
     grades: Mapped[list["Grade"]] = relationship("Grade", back_populates="student")
 
+    def __repr__(self):
+        return f"<Student {self.id=} {self.name=}>"
+
 
 class Teacher(Base):
     __tablename__ = "teachers"
@@ -34,6 +40,9 @@ class Teacher(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
 
     subjects: Mapped[list["Subject"]] = relationship("Subject", back_populates="teacher")
+
+    def __repr__(self):
+        return f"<Teacher {self.id=} {self.name=}>"
 
 
 class Subject(Base):
