@@ -30,7 +30,7 @@ class Student(Base):
     grades: Mapped[list["Grade"]] = relationship("Grade", back_populates="student")
 
     def __repr__(self):
-        return f"<Student {self.id=} {self.name=}>"
+        return f"<Student {self.id=} {self.name=} {self.group_id=}>"
 
 
 class Teacher(Base):
@@ -55,6 +55,9 @@ class Subject(Base):
     teacher: Mapped[Teacher] = relationship("Teacher", back_populates="subjects")
     grades: Mapped[list["Grade"]] = relationship("Grade", back_populates="subject")
 
+    def __repr__(self):
+        return f"<Subject {self.id=} {self.name=} {self.teacher_id=}>"
+
 
 class Grade(Base):
     __tablename__ = "grades"
@@ -67,3 +70,6 @@ class Grade(Base):
 
     student: Mapped[Student] = relationship("Student", back_populates="grades")
     subject: Mapped[Subject] = relationship("Subject", back_populates="grades")
+
+    def __repr__(self):
+        return f"<Grade {self.id=} {self.student_id=} {self.subject_id=} {self.grade=} {self.received_at=}>"
