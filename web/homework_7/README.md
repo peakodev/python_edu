@@ -16,7 +16,6 @@ The project is structured as follows:
 - `select_data.py`: the script that give ability to query 12 selects from homework
 - `crud.py`: the script that give ability to create/read/update/delete and list models using argparse CLI
 - `requirements.txt`: This file lists the Python dependencies that need to be installed
-- `schema.sql`: SQL schema
 
 ## Running the postgres in Docker container
 
