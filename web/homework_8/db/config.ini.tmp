@@ -1,0 +1,17 @@
+[Mongo]
+user = 
+pass = 
+db_name = 
+domain = 
+
+[Redis]
+host = 
+port = 
+
+[RabbitMQ]
+host = 
+port = 
+user = 
+passwd = 
+queue_send_email = send_email
+queue_send_sms = send_sms
