@@ -15,8 +15,6 @@ The project is structured as follows:
 - `data/`: folder with authors.json and quotes.json which to be placed by beautifulsoup.py script
 - `requirements.txt`: This file lists the Python dependencies that need to be installed
 
-## Running the postgres in Docker container
-
 ### Prepare env
 
 ```bash
