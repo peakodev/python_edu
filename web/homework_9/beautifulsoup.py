@@ -40,24 +40,20 @@ def get_author(soup: BeautifulSoup) -> dict:
     }
 
 
-def get_authors(soup: BeautifulSoup) -> list:
+def get_authors(soup: BeautifulSoup, processed_authors: list = []) -> list:
     quotes = soup.find_all('div', class_='quote')
     authors_list = []
-    processed_authors = []
     for i in range(0, len(quotes)):
         a_tag = quotes[i].find('a')
         relative_url = a_tag['href'] if a_tag else None
         if not relative_url or relative_url in processed_authors:
             continue
         processed_authors.append(relative_url)
-        html = requests.get(urljoin(URL, relative_url))
-        if html.status_code != 200:
-            raise Exception('Failed to load page')
-        soupAuthor = BeautifulSoup(html.text, 'lxml')
+        soupAuthor = fetch_page(urljoin(URL, relative_url))
         author = get_author(soupAuthor)
         authors_list.append(author)
 
-    return authors_list
+    return authors_list, processed_authors
 
 
 def write_json(file_path, objects: list):
@@ -66,16 +62,35 @@ def write_json(file_path, objects: list):
         json.dump(objects, file, indent=4, ensure_ascii=False)
 
 
-def parse():
-    response = requests.get(URL)
+def fetch_page(url):
+    print(f'Fetching page: {url}')
+    response = requests.get(url)
     if response.status_code != 200:
         raise Exception('Failed to load page')
-    soup = BeautifulSoup(response.text, 'lxml')
-    quotes = get_quotes(soup)
-    write_json(os.getenv("QUOTES_PATH"), quotes)
-    authors = get_authors(soup)
-    write_json(os.getenv("AUTHORS_PATH"), authors)
+    return BeautifulSoup(response.text, 'lxml')
+
+
+def parse():
+    soup = fetch_page(URL)
+    processed_authors = []
+    quotes = []
+    authors = []
+
+    while True:
+        quotes.extend(get_quotes(soup))
+        _authors, processed_authors = get_authors(soup, processed_authors)
+        authors.extend(_authors)
+
+        next_page = soup.find('li', class_='next')
+        if not next_page:
+            break
+
+        soup = fetch_page(urljoin(URL, next_page.find('a')['href']))
+
+    return quotes, authors
 
 
 if __name__ == '__main__':
-    parse()
+    quotes, authors = parse()
+    write_json(os.getenv("QUOTES_PATH"), quotes)
+    write_json(os.getenv("AUTHORS_PATH"), authors)
