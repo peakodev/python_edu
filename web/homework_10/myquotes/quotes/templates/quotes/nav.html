@@ -1,0 +1,18 @@
+{% if user.is_authenticated %}
+<div class="row">
+    <p>Welcome <b>{{ user.username }}!</b> <a href="{% url 'users:logout' %}" role="button"> ( logout )</a></p>
+</div>
+<div class="row">
+    <a href="{% url 'quotes:quote' %}" role="button">Add Quote</a>
+</div>
+<div class="row">
+    <a href="{% url 'quotes:author' %}" role="button">Add Author</a>
+</div>
+{% else %}
+<div class="row">
+    <p><a href="{% url 'users:signup' %}" role="button">Sign Up</a></p>
+</div>
+<div class="row">
+    <a href="{% url 'users:login' %}" role="button">Login</a>
+</div>
+{% endif %}

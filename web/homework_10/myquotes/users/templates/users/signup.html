@@ -1,0 +1,39 @@
+{% extends "quotes/base.html" %}
+
+{% block content %}
+
+<div>
+    <h2>Sign Up</h2>
+</div>
+
+{% load form_helpers %}
+
+<form method="post" action="{% url 'users:signup' %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="form-group col-xs-3">
+            <label> Username: </label>
+            {{ form.username|add_class:"form-control" }}
+            <span>{{ form.errors.username }}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-3">
+            <label> Password: </label>
+            {{ form.password1|add_class:"form-control" }}
+            <span>{{ form.errors.password1 }}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-3">
+            <label> Password confirmation:</label>
+            {{ form.password2|add_class:"form-control" }}
+            <span>{{ form.errors.password2 }}</span>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="reset" class="btn">Reset</button>
+</form>
+
+{% endblock %}
+
