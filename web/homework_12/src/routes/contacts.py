@@ -1,6 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Path, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Query,
+    Path,
+    status,
+    Request
+)
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from src.schemas import contact as contact_schema
 from src.database.models import Contact as ContactModel, User
@@ -14,6 +24,8 @@ router = APIRouter(
     tags=["contacts"],
     dependencies=[Depends(auth_service.get_current_user)]
 )
+
+limiter = Limiter(key_func=get_remote_address)
 
 
 @router.get("/birthdays", response_model=list[contact_schema.Contact])
@@ -58,10 +70,12 @@ async def get_contact(
 
 
 @router.post("/", response_model=contact_schema.Contact, status_code=status.HTTP_201_CREATED)
+@limiter.limit("5/minute")
 async def create_contact(
+    request: Request,
     body: contact_schema.ContactUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(auth_service.get_current_user),
 ) -> ContactModel:
     try:
         return await repo.create_contact(db, current_user, body)
