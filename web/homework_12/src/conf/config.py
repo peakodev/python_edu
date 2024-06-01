@@ -8,5 +8,12 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
 
+    mail_username: str
+    mail_password: str
+    mail_from: str
+    mail_port: int
+    mail_server: str
+    mail_validate_cert: bool
+
 
 settings = Settings()

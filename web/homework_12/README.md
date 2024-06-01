@@ -5,9 +5,9 @@
 The project is structured as follows:
 
 - `requirements.txt`: This file lists the Python dependencies that need to be installed
-- `conf/config.py`: class with ability to get .env variables using pydantic_settings
 - `migrations/`: alembic migrations
 - `src/`: fastapi project folder
+- `src/conf/config.py`: class with ability to get .env variables using pydantic_settings
 - `src/database/`: folder with db connections and models
 - `src/repository/`: folder with repositories scripts for users and contacts
 - `src/routes/`: folder with routes for auth and contacts
