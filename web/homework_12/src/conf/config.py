@@ -2,7 +2,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+    model_config = SettingsConfigDict(
+        env_file='.env',
+        env_file_encoding='utf-8'
+    )
 
     postgres_url: str
     secret_key: str
@@ -14,6 +17,8 @@ class Settings(BaseSettings):
     mail_port: int
     mail_server: str
     mail_validate_cert: bool
+
+    origins: list[str]
 
 
 settings = Settings()
