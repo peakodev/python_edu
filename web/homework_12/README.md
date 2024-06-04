@@ -12,6 +12,7 @@ The project is structured as follows:
 - `src/repository/`: folder with repositories scripts for users and contacts
 - `src/routes/`: folder with routes for auth and contacts
 - `src/schemas/`: folder with pydentic schemas
+- `src/middleware/`: folder with middlewares
 - `src/service/auth.py`: auth service with ability to hash password and JWT methods like access and refresh tokens
 - `main.py`: fastapi entrypoint
 
@@ -27,19 +28,10 @@ pip install -r requirements.txt
 
 ### Running the postgres in Docker container
 
-Run postgres in container
+Run docker compose
 
 ```bash
-docker pull postgres
-```
-
-```bash
-docker run --name pg_homework12 -e POSTGRES_PASSWORD=mysecretpassword -p 5552:5432 -d postgres
-```
-
-Init first migration if not created before
-```bash
-alembic revision --autogenerate -m "Init"
+docker-compose up -d
 ```
 
 Run migrations:
@@ -50,5 +42,5 @@ alembic upgrade head
 Run server for testing
 
 ```bash
-uvicorn main:app --host localhost --port 8000 --reload
+uvicorn main:app --host localhost --port 8008 --reload
 ```
