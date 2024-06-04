@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, func, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Date, func, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
@@ -32,3 +32,4 @@ class User(Base):
     created_at = Column(DateTime, default=func.now())
     avatar = Column(String(255), nullable=True)
     refresh_token = Column(String(255), nullable=True)
+    confirmed = Column(Boolean, default=False)

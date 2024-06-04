@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from conf.config import settings
+from src.conf.config import settings
 from src.database.models import Base
 
 # this is the Alembic Config object, which provides
@@ -17,7 +17,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option('sqlalchemy.url', settings.postgres_url)
+config.set_main_option('sqlalchemy.url', settings.postgres_url())
 
 # add your model's MetaData object here
 # for 'autogenerate' support

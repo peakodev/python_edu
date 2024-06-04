@@ -1,4 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends, status, Security
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Depends,
+    status,
+    Security,
+    BackgroundTasks,
+    Request,
+)
 from fastapi.security import (
     OAuth2PasswordRequestForm,
     HTTPAuthorizationCredentials,
@@ -7,9 +15,10 @@ from fastapi.security import (
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.schemas.user import UserModel, UserResponse, TokenModel
+from src.schemas.user import UserModel, UserResponse, TokenModel, RequestEmail
 from src.repository import users as repository_users
 from src.services.auth import auth_service
+from src.services.email import send_email, send_reset_password_email
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 security = HTTPBearer()
@@ -20,6 +29,8 @@ security = HTTPBearer()
              status_code=status.HTTP_201_CREATED)
 async def signup(
     body: UserModel,
+    background_tasks: BackgroundTasks,
+    request: Request,
     db: Session = Depends(get_db)
 ):
     exist_user = await repository_users.get_user_by_email(body.email, db)
@@ -29,6 +40,9 @@ async def signup(
         )
     body.password = auth_service.get_password_hash(body.password)
     new_user = await repository_users.create_user(body, db)
+    background_tasks.add_task(
+        send_email, new_user.email, request.base_url
+    )
     return {"user": new_user, "detail": "User successfully created"}
 
 
@@ -41,6 +55,10 @@ async def login(
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email"
+        )
+    if not user.confirmed:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed"
         )
     if not auth_service.verify_password(body.password, user.password):
         raise HTTPException(
@@ -79,3 +97,84 @@ async def refresh_token(
         "refresh_token": refresh_token,
         "token_type": "bearer",
     }
+
+
+@router.get("/confirmed_email/{token}")
+async def confirmed_email(
+    token: str,
+    db: Session = Depends(get_db)
+):
+    email = await auth_service.get_email_from_token(token)
+    user = await repository_users.get_user_by_email(email, db)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error"
+        )
+    if user.confirmed:
+        return {"message": "Your email is already confirmed"}
+    await repository_users.confirmed_email(email, db)
+    return {"message": "Email confirmed"}
+
+
+@router.post("/request_email")
+async def request_email(
+    body: RequestEmail,
+    background_tasks: BackgroundTasks,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    user = await repository_users.get_user_by_email(body.email, db)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid email"
+        )
+
+    if user.confirmed:
+        return {"message": "Your email is already confirmed"}
+    if user:
+        background_tasks.add_task(
+            send_email, user.email, request.base_url
+        )
+    return {"message": "Check your email for confirmation."}
+
+
+@router.post("/forgot_password")
+async def forgot_password(
+    body: RequestEmail,
+    background_tasks: BackgroundTasks,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    user = await repository_users.get_user_by_email(body.email, db)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Email not found"
+        )
+
+    auth_service.create_email_token(user.email)
+    background_tasks.add_task(
+        send_reset_password_email, user.email, request.base_url
+    )
+
+    return {"message": "Check your email for password reset link."}
+
+
+@router.post("/reset_password/{token}")
+async def reset_password(
+    token: str,
+    body: UserModel,
+    db: Session = Depends(get_db),
+):
+    email = await auth_service.get_email_from_token(token)
+    user = await repository_users.get_user_by_email(email, db)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Reset password error"
+        )
+
+    await repository_users.update_password(user, auth_service.get_password_hash(body.password), db)
+
+    return {"message": "Password successfully changed"}

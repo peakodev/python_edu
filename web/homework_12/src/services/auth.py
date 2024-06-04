@@ -1,5 +1,7 @@
+import pickle
 from typing import Optional
 
+import redis
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -9,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from src.database.db import get_db
 from src.repository import users as repository_users
-from conf.config import settings
+from src.conf.config import settings
 
 
 class Auth:
@@ -17,6 +19,7 @@ class Auth:
     SECRET_KEY = settings.secret_key
     ALGORITHM = settings.algorithm
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+    r = redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0)
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
@@ -26,19 +29,31 @@ class Auth:
 
     # define a function to generate a new access token
     async def create_access_token(self, data: dict, expires_delta: Optional[float] = None):
-        return await self.__create_token(data, 'access_token', 150, expires_delta)
+        return await self.__create_token(data, 150, scope='access_token', expires_delta=expires_delta)
 
     # define a function to generate a new refresh token
     async def create_refresh_token(self, data: dict, expires_delta: Optional[float] = None):
-        return await self.__create_token(data, 'refresh_token', 10080, expires_delta)
+        return await self.__create_token(data, 10080, scope='refresh_token', expires_delta=expires_delta)
 
-    async def __create_token(self, data: dict, scope: str, delta: int, expires_delta: Optional[float] = None):
+    # define a function to generate a new email token
+    async def create_email_token(self, data: dict):
+        return await self.__create_token(data, 10080)
+
+    async def __create_token(
+            self,
+            data: dict,
+            default_delta: int,
+            scope: Optional[str] = None,
+            expires_delta: Optional[float] = None
+    ):
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.now(UTC) + timedelta(seconds=expires_delta)
         else:
-            expire = datetime.now(UTC) + timedelta(minutes=delta)
-        to_encode.update({"iat": datetime.now(UTC), "exp": expire, "scope": scope})
+            expire = datetime.now(UTC) + timedelta(minutes=default_delta)
+        to_encode.update({"iat": datetime.now(UTC), "exp": expire})
+        if scope:
+            to_encode.update({"scope": scope})
         encoded_access_token = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
         return encoded_access_token
 
@@ -71,10 +86,27 @@ class Auth:
         except JWTError:
             raise credentials_exception
 
-        user = await repository_users.get_user_by_email(email, db)
+        user = self.r.get(f"user:{email}")
         if user is None:
-            raise credentials_exception
+            user = await repository_users.get_user_by_email(email, db)
+            if user is None:
+                raise credentials_exception
+            self.r.set(f"user:{email}", pickle.dumps(user))
+            self.r.expire(f"user:{email}", settings.redis_cache_time)
+        else:
+            user = pickle.loads(user)
+
         return user
+
+    async def get_email_from_token(self, token: str):
+        try:
+            payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
+            email = payload["sub"]
+            return email
+        except JWTError as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail="Invalid token for email verification")
 
 
 auth_service = Auth()
