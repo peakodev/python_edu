@@ -10,16 +10,39 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-import os
-from dotenv import load_dotenv
-
 from pathlib import Path
-
-dotenv_path = os.path.join(os.path.dirname(__file__), '../..', '.env')
-load_dotenv(dotenv_path)
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file='.env',
+        env_file_encoding='utf-8'
+    )
+
+    postgres_db: str
+    postgres_user: str
+    postgres_pass: str
+    postgres_port: str
+    postgres_host: str
+
+    mongo_user: str
+    mongo_pass: str
+    mongo_db_name: str
+    mongo_domain: str
+
+    mail_username: str
+    mail_password: str
+    mail_from: str
+    mail_port: int
+    mail_server: str
+    mail_use_ssl: bool
+
+
+settings = Settings()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -83,11 +106,11 @@ WSGI_APPLICATION = "myquotes.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'myquotes'),
-        'USER': os.getenv('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASS', 'postgres'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'NAME': settings.postgres_db,
+        'USER': settings.postgres_user,
+        'PASSWORD': settings.postgres_pass,
+        'HOST': settings.postgres_host,
+        'PORT': settings.postgres_port,
     }
 }
 
@@ -132,3 +155,13 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = settings.mail_server
+EMAIL_PORT = settings.mail_port
+EMAIL_STARTTLS = False
+EMAIL_USE_SSL = settings.mail_use_ssl
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = settings.mail_username
+EMAIL_HOST_PASSWORD = settings.mail_password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -9,8 +9,7 @@ The project is structured as follows:
 - `myquotes/`: django project
 - `myquotes/quotes`: django application for authors and quotes CRUD
 - `myquotes/users`: django application for auth (login/signup/logout)
-- `migrate_data/config.ini`: config file with database connections credentials from homework 9
-- `migrate_data/conf.py`: get conf variable from config.ini from homework 9
+- `config.py`: get conf variable from .env
 - `migrate_data/connect_mongo.py`: prepare connection to Mongo DB from homework 9
 - `migrate_data/models.py`: Author and Quotes Document model for mongoengine from homework 9
 - `requirements.txt`: This file lists the Python dependencies that need to be installed
@@ -27,12 +26,17 @@ pip install -r requirements.txt
 
 ### Running the postgres in Docker container
 
-Run postgres in container
-
 ```bash
-docker pull postgres
+docker-compose up -d
 ```
 
 ```bash
-docker run --name pg_homework10 -e POSTGRES_PASSWORD=mysecretpassword -p 5552:5432 -d postgres
+cd myquotes
+py manage.py migrate
+py manage.py createsuperuser
+py ../migrate.py
+```
+
+```bash
+py manage.py runserver
 ```
