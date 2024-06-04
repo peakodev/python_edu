@@ -13,6 +13,11 @@ class Settings(BaseSettings):
     postgres_port: str
     postgres_host: str
 
+    redis_host: str = 'localhost'
+    redis_port: int = 6379
+
+    redis_cache_time: int = 900
+
     secret_key: str
     algorithm: str
 
