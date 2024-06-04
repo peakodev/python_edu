@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     mail_from: str
     mail_port: int
     mail_server: str
+    mail_use_ssl: bool
 
 
 settings = Settings()
@@ -159,7 +160,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = settings.mail_server
 EMAIL_PORT = settings.mail_port
 EMAIL_STARTTLS = False
-EMAIL_USE_SSL = True
+EMAIL_USE_SSL = settings.mail_use_ssl
 EMAIL_USE_TLS = False
 EMAIL_HOST_USER = settings.mail_username
 EMAIL_HOST_PASSWORD = settings.mail_password

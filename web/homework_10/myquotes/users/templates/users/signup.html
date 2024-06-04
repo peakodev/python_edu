@@ -19,6 +19,13 @@
     </div>
     <div class="row">
         <div class="form-group col-xs-3">
+            <label> Email: </label>
+            {{ form.email|add_class:"form-control" }}
+            <span>{{ form.errors.email }}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-3">
             <label> Password: </label>
             {{ form.password1|add_class:"form-control" }}
             <span>{{ form.errors.password1 }}</span>

@@ -15,14 +15,14 @@
 <form action="{% url 'users:login' %}" method="post">
     {% csrf_token %}
     <div class="row">
-        <div class="form-group col-xs-3">
+        <div class="form-group col-xs-4">
             <label> Username: </label>
             {{ form.username|add_class:"form-control" }}
         </div>
     </div>
 
     <div class="row">
-        <div class="form-group col-xs-3">
+        <div class="form-group col-xs-4">
             <label>Password: </label>
             {{ form.password|add_class:"form-control" }}
         </div>
@@ -30,6 +30,9 @@
 
     <button type="submit" class="btn btn-primary">Submit</button>
     <button type="reset" class="btn">Reset</button>
+    <div class="btn">
+        <a href="{% url 'users:password_reset' %}" class="text-center"><i>Forgot Password?</i></a>
+    </div>
 </form>
 
 {% endblock %}
