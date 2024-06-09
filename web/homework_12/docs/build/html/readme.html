@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Homework 12 &#8212; Contacts API  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css?v=87629129" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to Contacts API’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Contacts API’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Contacts API  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Homework 12</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="homework-12">
+<h1>Homework 12<a class="headerlink" href="#homework-12" title="Link to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
+<p>The project is structured as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>: This file lists the Python dependencies that
+need to be installed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">migrations/</span></code>: alembic migrations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/</span></code>: fastapi project folder</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/conf/config.py</span></code>: class with ability to get .env variables
+using pydantic_settings</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/database/</span></code>: folder with db connections and models</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/repository/</span></code>: folder with repositories scripts for users and
+contacts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/routes/</span></code>: folder with routes for auth and contacts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/schemas/</span></code>: folder with pydentic schemas</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/middleware/</span></code>: folder with middlewares</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/service/auth.py</span></code>: auth service with ability to hash password
+and JWT methods like access and refresh tokens</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main.py</span></code>: fastapi entrypoint</p></li>
+</ul>
+</section>
+<section id="prepare-env">
+<h2>Prepare env<a class="headerlink" href="#prepare-env" title="Link to this heading">¶</a></h2>
+<section id="install-libs">
+<h3>Install libs<a class="headerlink" href="#install-libs" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="running-the-postgres-in-docker-container">
+<h3>Running the postgres in Docker container<a class="headerlink" href="#running-the-postgres-in-docker-container" title="Link to this heading">¶</a></h3>
+<p>Run docker compose</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+<p>Run migrations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>alembic<span class="w"> </span>upgrade<span class="w"> </span>head
+</pre></div>
+</div>
+<p>Run server for testing</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvicorn<span class="w"> </span>main:app<span class="w"> </span>--host<span class="w"> </span>localhost<span class="w"> </span>--port<span class="w"> </span><span class="m">8008</span><span class="w"> </span>--reload
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Homework 12</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#prepare-env">Prepare env</a><ul>
+<li><a class="reference internal" href="#install-libs">Install libs</a></li>
+<li><a class="reference internal" href="#running-the-postgres-in-docker-container">Running the postgres in Docker container</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Welcome to Contacts API’s documentation!</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/readme.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Contacts API’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Contacts API  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Homework 12</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Nazar Salo.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>

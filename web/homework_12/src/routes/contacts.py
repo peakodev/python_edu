@@ -30,12 +30,12 @@ limiter = Limiter(key_func=get_remote_address)
 
 @router.get("/birthdays", response_model=list[contact_schema.Contact])
 @limiter.limit("3/minute")
-async def get_7_days_birthday_contacts(
+async def get_birthday_contacts(
     request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user)
 ) -> list[contact_schema.Contact]:
-    return await repo.get_7_days_birthday_contacts(db, current_user)
+    return await repo.get_birthdays_contacts(db, current_user)
 
 
 @router.get("/search", response_model=list[contact_schema.Contact])
