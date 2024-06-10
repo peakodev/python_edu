@@ -104,19 +104,21 @@ async def update_contact(
     Returns:
         Contact | None: The updated contact, or None if the contact does not exist.
     """
-    db.query(Contact).filter(
-        and_(Contact.id == contact_id, Contact.user_id == user.id)
-    ).update(contact.dict())
+    origin = await get_contact(db, user, contact_id)
+    if origin is None:
+        return None
+    for key, value in contact.dict().items():
+        setattr(origin, key, value)
     db.commit()
 
-    return await get_contact(db, user, contact_id)
+    return origin
 
 
 async def delete_contact(
         db: Session,
         user: User,
         contact_id: int
-) -> Contact:
+) -> Contact | None:
     """
     Delete a contact for a specific user.
 
@@ -126,9 +128,11 @@ async def delete_contact(
         contact_id (int): The ID of the contact to delete.
 
     Returns:
-        Contact: The deleted contact, or None if the contact does not exist.
+        Contact | None: The deleted contact, or None if the contact does not exist.
     """
     contact = await get_contact(db, user, contact_id)
+    if contact is None:
+        return None
     db.delete(contact)
     db.commit()
 
