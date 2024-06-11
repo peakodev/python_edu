@@ -48,6 +48,7 @@ async def send_email(email: EmailStr, host: str):
         await fm.send_message(message, template_name="email_template.html")
     except ConnectionErrors as err:
         print(err)
+        raise ConnectionErrors(err)
 
 
 async def send_reset_password_email(email: EmailStr, host: str):
@@ -76,3 +77,4 @@ async def send_reset_password_email(email: EmailStr, host: str):
         await fm.send_message(message, template_name="email_reset_passwd_template.html")
     except ConnectionErrors as err:
         print(err)
+        raise ConnectionErrors(err)
