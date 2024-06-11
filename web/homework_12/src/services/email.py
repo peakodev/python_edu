@@ -23,6 +23,13 @@ conf = ConnectionConfig(
 
 
 async def send_email(email: EmailStr, host: str):
+    """
+    Send email to user
+
+    Args:
+        email (EmailStr): The email of the user to send the email to.
+        host (str): The host of the application.
+    """
     try:
         token_verification = await auth_service.create_email_token({"sub": email})
         message = MessageSchema(
@@ -41,9 +48,17 @@ async def send_email(email: EmailStr, host: str):
         await fm.send_message(message, template_name="email_template.html")
     except ConnectionErrors as err:
         print(err)
+        raise ConnectionErrors(err)
 
 
 async def send_reset_password_email(email: EmailStr, host: str):
+    """
+    Send email to user to reset password
+
+    Args:
+        email (EmailStr): The email of the user to send the email to.
+        host (str): The host of the application.
+    """
     try:
         token_verification = await auth_service.create_email_token({"sub": email})
         message = MessageSchema(
@@ -62,3 +77,4 @@ async def send_reset_password_email(email: EmailStr, host: str):
         await fm.send_message(message, template_name="email_reset_passwd_template.html")
     except ConnectionErrors as err:
         print(err)
+        raise ConnectionErrors(err)

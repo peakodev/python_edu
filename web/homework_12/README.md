@@ -15,6 +15,8 @@ The project is structured as follows:
 - `src/middleware/`: folder with middlewares
 - `src/service/auth.py`: auth service with ability to hash password and JWT methods like access and refresh tokens
 - `main.py`: fastapi entrypoint
+- `tests/`: folder with tests
+- `cleanup.sh`: Cleaned up __pycache__ directories and .pyc files.
 
 ## Prepare env
 
@@ -35,6 +37,7 @@ docker-compose up -d
 ```
 
 Run migrations:
+
 ```bash
 alembic upgrade head
 ```
@@ -43,4 +46,18 @@ Run server for testing
 
 ```bash
 uvicorn main:app --host localhost --port 8008 --reload
+```
+
+### Tests
+
+Run test:
+
+```bash
+pytest -v tests/
+```
+
+Run test coverage:
+
+```bash
+pytest -v --cov=src --cov-report=term-missing --cov-report=html tests/
 ```

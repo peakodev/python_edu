@@ -21,22 +21,68 @@ class Auth:
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
     r = redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0)
 
-    def verify_password(self, plain_password, hashed_password):
+    def verify_password(self, plain_password, hashed_password) -> bool:
+        """
+        Verify password
+
+        Args:
+            plain_password (_type_): The plain password
+            hashed_password (bool): The hashed password
+
+        Returns:
+            bool: True if the password is correct, False otherwise
+        """
         return self.pwd_context.verify(plain_password, hashed_password)
 
-    def get_password_hash(self, password: str):
+    def get_password_hash(self, password: str) -> str:
+        """
+        Get password hash
+
+        Args:
+            password (str): The password
+
+        Returns:
+            str: The hashed password
+        """
         return self.pwd_context.hash(password)
 
-    # define a function to generate a new access token
-    async def create_access_token(self, data: dict, expires_delta: Optional[float] = None):
+    async def create_access_token(self, data: dict, expires_delta: Optional[float] = None) -> str:
+        """
+        Create a new access token
+
+        Args:
+            data (dict): JWT token data which should contain the user email
+            expires_delta (Optional[float], optional): The expiration time in seconds. Defaults to None.
+
+        Returns:
+            str: The JWT token
+        """
         return await self.__create_token(data, 150, scope='access_token', expires_delta=expires_delta)
 
-    # define a function to generate a new refresh token
-    async def create_refresh_token(self, data: dict, expires_delta: Optional[float] = None):
+    async def create_refresh_token(self, data: dict, expires_delta: Optional[float] = None) -> str:
+        """
+        Create a new refresh token
+
+        Args:
+            data (dict): JWT token data which should contain the user email
+            expires_delta (Optional[float], optional): The expiration time in seconds. Defaults to None.
+
+        Returns:
+            str: The JWT token
+        """
         return await self.__create_token(data, 10080, scope='refresh_token', expires_delta=expires_delta)
 
     # define a function to generate a new email token
-    async def create_email_token(self, data: dict):
+    async def create_email_token(self, data: dict) -> str:
+        """
+        Create a new email token
+
+        Args:
+            data (dict): JWT token data which should contain the user email
+
+        Returns:
+            str: The JWT token
+        """
         return await self.__create_token(data, 10080)
 
     async def __create_token(
@@ -45,7 +91,7 @@ class Auth:
             default_delta: int,
             scope: Optional[str] = None,
             expires_delta: Optional[float] = None
-    ):
+    ) -> str:
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.now(UTC) + timedelta(seconds=expires_delta)
@@ -54,10 +100,21 @@ class Auth:
         to_encode.update({"iat": datetime.now(UTC), "exp": expire})
         if scope:
             to_encode.update({"scope": scope})
-        encoded_access_token = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
-        return encoded_access_token
+        return jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
 
-    async def decode_refresh_token(self, refresh_token: str):
+    async def decode_refresh_token(self, refresh_token: str) -> str:
+        """
+        Decode refresh token and return the email
+
+        Args:
+            refresh_token (str): The refresh token
+
+        Raises:
+            HTTPException: Raises an exception if invalid scope or credentials
+
+        Returns:
+            str: The email
+        """
         try:
             payload = jwt.decode(refresh_token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
             if payload['scope'] == 'refresh_token':
@@ -68,6 +125,19 @@ class Auth:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
 
     async def get_current_user(self, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+        """
+        Get the current user from token
+
+        Args:
+            token (str, optional): The JWT token. Defaults to Depends(oauth2_scheme).
+            db (Session, optional): The database session. Defaults to Depends(get_db).
+
+        Raises:
+            HTTPException: Raises an exeption when could not validate credentials
+
+        Returns:
+            User: The user
+        """
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -98,7 +168,19 @@ class Auth:
 
         return user
 
-    async def get_email_from_token(self, token: str):
+    async def get_email_from_token(self, token: str) -> str:
+        """
+        Get email from token
+
+        Args:
+            token (str): The JWT token
+
+        Raises:
+            HTTPException: Raises an exception if invalid token for email verification
+
+        Returns:
+            str: The email
+        """
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
             email = payload["sub"]
