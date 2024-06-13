@@ -1,0 +1,8 @@
+setup.py
+xfiles_sorter/__init__.py
+xfiles_sorter/sorter_test.py
+xfiles_sorter/xfiles_sorter.py
+xfiles_sorter.egg-info/PKG-INFO
+xfiles_sorter.egg-info/SOURCES.txt
+xfiles_sorter.egg-info/dependency_links.txt
+xfiles_sorter.egg-info/top_level.txt

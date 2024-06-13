@@ -1,0 +1,12 @@
+setup.py
+agent_notes/__init__.py
+agent_notes/entities.py
+agent_notes/exceptions.py
+agent_notes/format.py
+agent_notes/iterators.py
+agent_notes/test_notes.py
+agent_notes.egg-info/PKG-INFO
+agent_notes.egg-info/SOURCES.txt
+agent_notes.egg-info/dependency_links.txt
+agent_notes.egg-info/top_level.txt
+tests/run_test.py
