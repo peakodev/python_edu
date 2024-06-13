@@ -53,4 +53,4 @@ def factorize_multiprocessed(*numbers):
     return result
 
 
-test_factorize(*factorize(*TEST_DATA))
+test_factorize(*factorize_multiprocessed(*TEST_DATA))
